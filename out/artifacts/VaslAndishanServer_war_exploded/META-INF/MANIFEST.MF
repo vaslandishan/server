@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: vaslandishan
-Implementation-Version: 0.0.1-SNAPSHOT
-Built-By: shahram4m
-Implementation-Vendor-Id: ir.server
-Created-By: IntelliJ IDEA
-Build-Jdk: 10
-Main-Class: ${start-class}
-
