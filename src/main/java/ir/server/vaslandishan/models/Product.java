@@ -3,6 +3,8 @@ package ir.server.vaslandishan.models;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.springframework.data.annotation.LastModifiedBy;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -26,31 +28,36 @@ public class Product extends UserDateAudit{
     @Size(max = 255)
     private String description;
 
-    private double price;
+    private Double price;
 
-    private long fileId;
+    private Long fileId;
+
+    private Long createdBy;
+
+    private Long updatedBy;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "booth_id", nullable = false)
     private Booth booth;
 
 
-    //private List<OrderDetail> orderDetails = new ArrayList<>();
-
     public Product() {}
 
     public Product(String title) {
 
         this.title = title;
-        //this.description = description;
+
     }
 
-    public Product(String title, String description, double price,long fileId) {
+    public Product(String title, String description, Double price, Long fileId, Long createdBy, Long updatedBy, Long id) {
 
         this.title = title;
         this.description = description;
         this.price = price;
         this.fileId = fileId;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
+        this.id = id;
     }
 
     public Long getId() {
@@ -77,7 +84,7 @@ public class Product extends UserDateAudit{
         this.booth = booth;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
@@ -85,12 +92,28 @@ public class Product extends UserDateAudit{
         this.price = price;
     }
 
-    public long getFileId() {
+    public Long getFileId() {
         return fileId;
     }
 
     public void setFileId(long fileId) {
         this.fileId = fileId;
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Long getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(Long updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
     @Override
@@ -114,15 +137,4 @@ public class Product extends UserDateAudit{
         this.description = description;
     }
 
-/*    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
-    @Size(min = 2, max = 6)
-    @Fetch(FetchMode.SELECT)
-    @BatchSize(size = 30)
-    public List<OrderDetail> getOrderDetails() {
-        return orderDetails;
-    }
-
-    public void setOrderDetails(List<OrderDetail> orderDetails) {
-        this.orderDetails = orderDetails;
-    }*/
 }

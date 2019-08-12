@@ -5,6 +5,7 @@ import ir.server.vaslandishan.models.Product;
 import ir.server.vaslandishan.models.User;
 import ir.server.vaslandishan.payload.BoothResponse;
 import ir.server.vaslandishan.payload.ProductResponse;
+import ir.server.vaslandishan.payload.TransactionResponse;
 import ir.server.vaslandishan.payload.UserSummary;
 
 import java.time.Instant;
@@ -68,5 +69,31 @@ public class ModelMapper {
         //productResponse.setCreatedBy(creatorSummary);
 
         return productResponse;
+    }
+
+    public static TransactionResponse mapTransactionToTransactionResponse(TransactionResponse transaction) {
+        TransactionResponse transactionResponse = new TransactionResponse();
+        transactionResponse.setId(transaction.getId());
+        transactionResponse.setClient_ip(transaction.getClient_ip());
+        transactionResponse.setCp(transaction.getCp());
+        transactionResponse.setCreated_at(transaction.getCreated_at());
+        transactionResponse.setMobile_no(transaction.getMobile_no());
+        transactionResponse.setCreated_at_day(transaction.getCreated_at_day());
+        transactionResponse.setDescr(transaction.getDescr());
+        transactionResponse.setDescr2(transaction.getDescr2());
+        transactionResponse.setOrderid(transaction.getOrderid());
+        transactionResponse.setPrice(transaction.getPrice());
+        transactionResponse.setPcode(transaction.getPcode());
+        transactionResponse.setResult(transaction.getResult2());
+        transactionResponse.setSent_to_sdp(transaction.getSent_to_sdp());
+        transactionResponse.setTel(transaction.getTel());
+        transactionResponse.setTx_debug(transaction.getTx_debug());
+        transactionResponse.setTx_ref(transaction.getTx_ref());
+
+
+        //UserSummary creatorSummary = new UserSummary(creator.getId(), creator.getUsername(), creator.getName());
+        //productResponse.setCreatedBy(creatorSummary);
+
+        return transactionResponse;
     }
 }

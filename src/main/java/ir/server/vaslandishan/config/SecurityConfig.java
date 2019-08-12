@@ -84,7 +84,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/api/user/checkUsernameAvailability", "/api/user/checkEmailAvailability")
                 .permitAll()
-                .antMatchers(HttpMethod.GET, "/api/booths/**","/api/file/**", "/api/customers/**","/api/user/**","/api/products/**")
+                .antMatchers(HttpMethod.GET, "/api/booths/**","/api/file/**", "/api/customers/**","/api/user/**","/api/products/**","/api/transactions/**")
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/api/booths/**", "/api/customers/**", "/api/user/**")
                 .permitAll()

@@ -46,14 +46,17 @@ public class BoothService {
 
         logger.info(boothRequest.getTitle());
 
-        boothRequest.getProducts().forEach(productRequest -> {
+/*        boothRequest.getProducts().forEach(productRequest -> {
             booth.addProduct(new Product(
                     productRequest.getTitle(),
                     productRequest.getDescription(),
                     productRequest.getPrice(),
-                    productRequest.getFileId()
+                    productRequest.getFileId(),
+                    1,
+                    1
+
             ));
-        });
+        });*/
 
 
         return boothRepository.save(booth);

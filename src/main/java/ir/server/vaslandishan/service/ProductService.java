@@ -1,6 +1,8 @@
 package ir.server.vaslandishan.service;
 
+import ir.server.vaslandishan.payload.TransactionResponse;
 import ir.server.vaslandishan.repository.StoredProcedureRepository;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import ir.server.vaslandishan.exception.BadRequestException;
 import ir.server.vaslandishan.exception.ResourceNotFoundException;
@@ -17,17 +19,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.sql.Date;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 //import org.apache.logging.log4j.Logger;
 
@@ -105,50 +109,56 @@ public class ProductService {
 
     Map<Long, User> getProductCreatorMap(List<Product> products) {
         logger.info("S01");
+
         // Get Product Creator details of the given list of products
         List<Long> creatorIds = products.stream()
                 .map(Product::getCreatedBy)
                 .distinct()
                 .collect(Collectors.toList());
-        logger.info("S02");
+
         List<User> creators = userRepository.findByIdIn(creatorIds);
         Map<Long, User> creatorMap = creators.stream()
                 .collect(Collectors.toMap(User::getId, Function.identity()));
-        logger.info("S03");
         return creatorMap;
     }
 
     public PagedResponse<ProductResponse> getAllProductsBySp(UserPrincipal currentUser, int page, int size) {
         validatePageNumberAndSize(page, size);
 
-
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
-         Page<Product> products = (Page<Product>)storedProcedureRepository.getAllProducts();
-         Page<Product> products2 = productRepository.findAll(pageable);
+        Page<Product> products = storedProcedureRepository.getAllProducts();
+        Map<Long, User> creatorMap = getProductCreatorMap(products.getContent());
 
-        products2 = products;
-
-         if(products.equals(products2))
-         {
-             logger.info("is equeal ?????????????????????????????????????????");
-         }
-
-        logger.info("getAllProductsBySp"+products2.getTotalPages());
-
-        List<Product> p = products2.getContent();
-        logger.info("l1:"+p.size());
-
-        //List<Long> productIds = products.map(Product::getId).getContent();
-        Map<Long, User> creatorMap = getProductCreatorMap(products2.getContent());
-
-        logger.info("l2:"+products2.getTotalPages());
-        List<ProductResponse> productResponses = products2.map(product -> {
+        List<ProductResponse> productResponses = products.map(product -> {
             return ModelMapper.mapProductToProductResponse(product,
                     creatorMap.get(product.getCreatedBy()));
         }).getContent();
 
 
-        return new PagedResponse<>(productResponses, products2.getNumber(),
-                products2.getSize(), products2.getTotalElements(), products2.getTotalPages(), products2.isLast());
+        return new PagedResponse<>(productResponses, products.getNumber(),
+                products.getSize(), products.getTotalElements(), products.getTotalPages(), products.isLast());
+    }
+
+    public PagedResponse<TransactionResponse> getAllTransactionByProductCode(
+            UserPrincipal currentUser,
+            String productCode,
+            Date fromDate,
+            Date toDate,
+            int page, int size) {
+
+        validatePageNumberAndSize(page, size);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
+        Page<TransactionResponse> transactions = storedProcedureRepository.getAllTransactionByProductCode(
+                productCode,fromDate,toDate,page,size);
+        //Map<Long, User> creatorMap = getProductCreatorMap(transactions.getContent());
+
+        List<TransactionResponse> transactionResponses = transactions.map(product -> {
+            return ModelMapper.mapTransactionToTransactionResponse(product);
+        }).getContent();
+
+
+        return new PagedResponse<>(transactionResponses, transactions.getNumber(),
+                transactions.getSize(), transactions.getTotalElements(), transactions.getTotalPages(), transactions.isLast());
     }
 }
